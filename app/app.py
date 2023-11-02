@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import data
 
-# Funções para inserir, deletar, alterar e trocar de campeonato
+# Funções
 def insert_time_screen():
     # Inserir um time no banco de dados
     st.header("Inserir um Time")
@@ -27,10 +27,10 @@ def insert_time_screen():
 def delete_time_screen():
     st.header("Deletar um Time")
     
-    # Recupere a lista de times do banco de dados
+    # Puxar a lista de times do banco de dados
     time_data = data.get_time_data()
     
-    # Crie um menu suspenso para selecionar o time a ser excluído
+    # input para selecionar o time a ser excluído
     selected_time = st.selectbox("Selecione o time a ser excluído:", time_data)
     
     if st.button("Excluir"):
@@ -43,20 +43,20 @@ def delete_time_screen():
 def delete_time(time_name):
     data.delete_time(time_name)
 
-# Função para a tela de atualização de time
+# Função para atualizar um time
 def update_time_screen():
     st.header("Alterar um Time")
     
-    # Recupere a lista de times do banco de dados
+    # puxar a lista de times do banco de dados
     time_data = data.get_time_data()
     
-    # Crie um menu suspenso para selecionar o time a ser atualizado
+   # input para selecionar o time a ser atualizado
     selected_time = st.selectbox("Selecione o time a ser atualizado:", time_data)
     
     if selected_time:
         st.write("Atualize os campos abaixo:")
         
-        # Recupere os dados do time selecionado
+        # Recuperar os dados do time selecionado
         time_name, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano = selected_time
 
         # Campos de entrada para os novos valores
@@ -79,9 +79,8 @@ def update_time(time_name, gols_sofridos, gols_marcados, pontos, vitorias, derro
     data.update_time(time_name, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano)
 
 def change_campeonato_screen():
-    # Implemente a tela de troca de campeonato aqui
     st.header("Trocar de Campeonato")
-    # ...
+    # ........................
 
 # Função para mostrar a classificação dos times
 def show_ranking():
@@ -96,10 +95,9 @@ def show_ranking():
         st.write("Nenhum dado de time disponível.")
 
 def main_app():
-    # Título da aplicação
     st.title("Campeonato Brasileiro 2023")
 
-    # Menu lateral
+    # Menu
     menu_option = st.sidebar.selectbox("Menu", ["Classificação", "Inserir Time", "Deletar Time", "Alterar Time", "Trocar de Campeonato"])
 
     if menu_option == "Classificação":
