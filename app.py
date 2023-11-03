@@ -22,7 +22,6 @@ def insert_time_screen():
             data.insert_time(nome, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano)
             st.success("Time inserido com sucesso!")
 
-
 # Função para tela de exclusão de time
 def delete_time_screen():
     st.header("Deletar um Time")
@@ -38,10 +37,6 @@ def delete_time_screen():
             time_name = selected_time[0]  # O nome do time está na primeira coluna
             data.delete_time(time_name)  # Chame a função para excluir o time no banco de dados
             st.success(f"Time '{time_name}' excluído com sucesso!")
-
-# Função para deletar um time no banco de dados
-def delete_time(time_name):
-    data.delete_time(time_name)
 
 # Função para atualizar um time
 def update_time_screen():
@@ -74,14 +69,6 @@ def update_time_screen():
             data.update_time(time_name, new_gols_sofridos, new_gols_marcados, new_pontos, new_vitorias, new_derrotas, new_partidas_jogadas, new_empates, new_treinador, new_campeonato_ano)
             st.success(f"Dados do time '{time_name}' atualizados com sucesso!")
 
-# Função para atualizar dados de um time no banco de dados
-def update_time(time_name, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano):
-    data.update_time(time_name, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano)
-
-def change_campeonato_screen():
-    st.header("Trocar de Campeonato")
-    # ........................
-
 # Função para mostrar a classificação dos times
 def show_ranking():
     # Exibir dados da tabela Time
@@ -97,19 +84,17 @@ def show_ranking():
 def main_app():
     st.title("Campeonato Brasileiro 2023")
 
-    # Menu
-    menu_option = st.sidebar.selectbox("Menu", ["Classificação", "Inserir Time", "Deletar Time", "Alterar Time", "Trocar de Campeonato"])
+    # Menu lateral com botões para navegar nas funcionalidades
+    option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time"))
 
-    if menu_option == "Classificação":
+    if option == "Classificação":
         show_ranking()
-    elif menu_option == "Inserir Time":
+    elif option == "Inserir Time":
         insert_time_screen()
-    elif menu_option == "Deletar Time":
+    elif option == "Deletar Time":
         delete_time_screen()
-    elif menu_option == "Alterar Time":
+    elif option == "Alterar Time":
         update_time_screen()
-    elif menu_option == "Trocar de Campeonato":
-        change_campeonato_screen()
 
 if __name__ == "__main__":
     st.write("Executando o aplicativo...")
