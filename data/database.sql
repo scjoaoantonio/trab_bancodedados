@@ -5,16 +5,14 @@ CREATE TABLE Campeonato (
 
 CREATE TABLE Time (
     Nome TEXT PRIMARY KEY,
-    GolsSofridos INTEGER,
-    GolsMarcados INTEGER,
+    Treinador TEXT,
     Pontos INTEGER,
+    PartidasJogadas INTEGER,
     Vitórias INTEGER,
     Derrotas INTEGER,
-    PartidasJogadas INTEGER,
-    Empates INTEGER,
-    Treinador TEXT,
-    CampeonatoAno INTEGER,
-    FOREIGN KEY (CampeonatoAno) REFERENCES Campeonato (Ano)
+    Empates INTEGER
+    GolsMarcados INTEGER,
+    GolsSofridos INTEGER,
 );
 
 CREATE TABLE Partida (

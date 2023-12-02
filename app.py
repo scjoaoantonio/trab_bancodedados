@@ -3,24 +3,29 @@ import streamlit as st
 import data
 
 # Funções
+def calculate_points(vitorias, empates, derrotas):
+    return (vitorias * 3) + empates + (derrotas * 0)
+
 def insert_time_screen():
     # Inserir um time no banco de dados
     st.header("Inserir um Time")
     nome = st.text_input("Nome do Time")
-    gols_sofridos = st.number_input("Gols Sofridos")
-    gols_marcados = st.number_input("Gols Marcados")
-    pontos = st.number_input("Pontos")
+    treinador = st.text_input("Sigla")
     vitorias = st.number_input("Vitórias")
     derrotas = st.number_input("Derrotas")
-    partidas_jogadas = st.number_input("Partidas Jogadas")
     empates = st.number_input("Empates")
-    treinador = st.text_input("Treinador")
-    campeonato_ano = st.number_input("Ano do Campeonato")
+    partidas_jogadas = vitorias + derrotas + empates
+    gols_marcados = st.number_input("Gols Marcados")
+    gols_sofridos = st.number_input("Gols Sofridos")
+    saldo = gols_marcados - gols_sofridos
+    campeonato_ano = saldo
+    
 
     if st.button("Inserir"):
-        if nome:
-            data.insert_time(nome, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano)
-            st.success("Time inserido com sucesso!")
+        pontos = calculate_points(vitorias, empates, derrotas)
+        data.insert_time(nome, treinador,pontos, vitorias, derrotas, empates, partidas_jogadas,gols_marcados, gols_sofridos,campeonato_ano)
+        st.success("Time inserido com sucesso!")
+
 
 # Função para tela de exclusão de time
 def delete_time_screen():
@@ -41,34 +46,40 @@ def delete_time_screen():
 # Função para atualizar um time
 def update_time_screen():
     st.header("Alterar um Time")
-    
+
     # puxar a lista de times do banco de dados
     time_data = data.get_time_data()
-    
-   # input para selecionar o time a ser atualizado
+
+    # input para selecionar o time a ser atualizado
     selected_time = st.selectbox("Selecione o time a ser atualizado:", time_data)
-    
+
     if selected_time:
         st.write("Atualize os campos abaixo:")
-        
+
         # Recuperar os dados do time selecionado
-        time_name, gols_sofridos, gols_marcados, pontos, vitorias, derrotas, partidas_jogadas, empates, treinador, campeonato_ano = selected_time
+        time_name, treinador, pontos, vitorias, derrotas,empates, partidas_jogadas,gols_marcados, gols_sofridos, campeonato_ano = selected_time
 
         # Campos de entrada para os novos valores
-        new_gols_sofridos = st.number_input("Novos Gols Sofridos", gols_sofridos)
-        new_gols_marcados = st.number_input("Novos Gols Marcados", gols_marcados)
-        new_pontos = st.number_input("Novos Pontos", pontos)
+        new_treinador = st.text_input("Nova Sigla", treinador)
         new_vitorias = st.number_input("Novas Vitórias", vitorias)
         new_derrotas = st.number_input("Novas Derrotas", derrotas)
-        new_partidas_jogadas = st.number_input("Novas Partidas Jogadas", partidas_jogadas)
         new_empates = st.number_input("Novos Empates", empates)
-        new_treinador = st.text_input("Novo Treinador", treinador)
-        new_campeonato_ano = st.number_input("Novo Ano do Campeonato", campeonato_ano)
+        new_partidas_jogadas = new_derrotas + new_empates + new_vitorias
+        new_gols_marcados = st.number_input("Novos Gols Marcados", gols_marcados)
+        new_gols_sofridos = st.number_input("Novos Gols Sofridos", gols_sofridos)
+        new_campeonato_ano = new_gols_marcados - new_gols_sofridos
 
         if st.button("Atualizar"):
-            data.update_time(time_name, new_gols_sofridos, new_gols_marcados, new_pontos, new_vitorias, new_derrotas, new_partidas_jogadas, new_empates, new_treinador, new_campeonato_ano)
-            st.success(f"Dados do time '{time_name}' atualizados com sucesso!")
-
+            print(f"Vitórias: {new_vitorias}, Empates: {new_empates}, Derrotas: {new_derrotas}")
+            
+            if new_partidas_jogadas == new_vitorias + new_empates + new_derrotas:
+                new_pontos = calculate_points(new_vitorias, new_empates, new_derrotas)
+                print(f"Novos Pontos: {new_pontos}")
+                
+                data.update_time(time_name, new_treinador, new_pontos, new_vitorias, new_derrotas, new_empates, new_partidas_jogadas,  new_gols_marcados,new_gols_sofridos,  new_campeonato_ano)
+                st.success(f"Dados do time '{time_name}' atualizados com sucesso!")
+            else:
+                st.error("A soma de vitórias, empates e derrotas não coincide com o número de partidas jogadas.")
 # Função para mostrar a classificação dos times
 def show_ranking():
     # Exibir dados da tabela Time
@@ -76,10 +87,32 @@ def show_ranking():
     time_data = data.get_time_data()
 
     if time_data:
-        df = pd.DataFrame(time_data, columns=["Nome", "GolsSofridos", "GolsMarcados", "Pontos", "Vitórias", "Derrotas", "PartidasJogadas", "Empates", "Treinador", "CampeonatoAno"])
-        st.dataframe(df)
+        # Criar coluna de Partidas Jogadas (J) a partir de Vitórias, Empates e Derrotas
+        df = pd.DataFrame(time_data, columns=["Nome", "Sigla", "Pontos", "Vitórias", "Derrotas", "Empates", "Jogos","GolsMarcados", "GolsSofridos", "Saldo"])
+
+        # Calcular Pontos (Pts)
+        df["Pts"] = df.apply(lambda row: calculate_points(row["Vitórias"], row["Empates"], row["Derrotas"]), axis=1)
+
+        # Reordenar as colunas
+        df = df[["Nome", "Sigla", "Pontos", "Jogos", "Vitórias", "Derrotas", "Empates", "GolsMarcados", "GolsSofridos", "Saldo"]]
+
+        # Rename the columns for better display
+        df.columns = ["Nome", "Sigla", "Pts", "J", "V", "D", "E", "GP", "GC", "GS"]
+
+        # Ordenar o DataFrame pelas colunas especificadas
+        df = df.sort_values(by=["Pts", "V", "GS", "GP"], ascending=[False, False, False, False])
+
+        # Resetar o índice para começar em 1
+        df.index = df.index + 1
+
+        st.dataframe(df)  # Não é necessário resetar o índice se você quer começar do 1
+
     else:
         st.write("Nenhum dado de time disponível.")
+
+
+
+
 
 def main_app():
     st.title("Campeonato Brasileiro 2023")
