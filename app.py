@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import data
+from dateutil.parser._parser import ParserError
 
 # Funções
 def calculate_points(vitorias, empates, derrotas):
@@ -111,23 +112,50 @@ def show_ranking():
         st.write("Nenhum dado de time disponível.")
 
 
+# Função de Login
+def login():
+    st.sidebar.header("Login")
+    username = st.sidebar.text_input("Nome de usuário")
+    password = st.sidebar.text_input("Senha", type="password")
+    return username, password
+
+# Verificar credenciais
+def authenticate(username, password):
+    # Verificar se é o administrador (coloque suas próprias credenciais aqui)
+    if username == "admin" and password == "admin":
+        return "admin"
+    # Verificar se é um usuário comum (coloque suas próprias credenciais aqui)
+    elif username == "user" and password == "user":
+        return "user"
+    else:
+        return None
 
 
 
 def main_app():
     st.title("Campeonato Brasileiro 2023")
 
-    # Menu lateral com botões para navegar nas funcionalidades
-    option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time"))
+    # Realizar login
+    username, password = login()
+    role = authenticate(username, password)
 
-    if option == "Classificação":
-        show_ranking()
-    elif option == "Inserir Time":
-        insert_time_screen()
-    elif option == "Deletar Time":
-        delete_time_screen()
-    elif option == "Alterar Time":
-        update_time_screen()
+    if role is None:
+        st.error("Insira suas credenciais válidas e faça seu login.")
+    else:
+        # Menu lateral com botões para navegar nas funcionalidades
+        option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time"))
+
+        if role == "admin":  # Somente o administrador tem acesso às funções de edição
+            if option == "Inserir Time":
+                insert_time_screen()
+            elif option == "Deletar Time":
+                delete_time_screen()
+            elif option == "Alterar Time":
+                update_time_screen()
+
+        # As outras opções podem ser acessadas por ambos (usuários e administradores)
+        if option == "Classificação":
+            show_ranking()
 
 if __name__ == "__main__":
     st.write("Executando o aplicativo...")
