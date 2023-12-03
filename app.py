@@ -12,12 +12,12 @@ def insert_time_screen():
     st.header("Inserir um Time")
     nome = st.text_input("Nome do Time")
     treinador = st.text_input("Sigla")
-    vitorias = st.number_input("Vitórias")
-    derrotas = st.number_input("Derrotas")
-    empates = st.number_input("Empates")
+    vitorias = st.number_input("Vitórias", step=1)
+    derrotas = st.number_input("Derrotas",step=1)
+    empates = st.number_input("Empates",step=1)
     partidas_jogadas = vitorias + derrotas + empates
-    gols_marcados = st.number_input("Gols Marcados")
-    gols_sofridos = st.number_input("Gols Sofridos")
+    gols_marcados = st.number_input("Gols Marcados",step=1)
+    gols_sofridos = st.number_input("Gols Sofridos",step=1)
     saldo = gols_marcados - gols_sofridos
     campeonato_ano = saldo
     
@@ -62,12 +62,12 @@ def update_time_screen():
 
         # Campos de entrada para os novos valores
         new_treinador = st.text_input("Nova Sigla", treinador)
-        new_vitorias = st.number_input("Novas Vitórias", vitorias)
-        new_derrotas = st.number_input("Novas Derrotas", derrotas)
-        new_empates = st.number_input("Novos Empates", empates)
+        new_vitorias = st.number_input("Novas Vitórias", vitorias,step=1)
+        new_derrotas = st.number_input("Novas Derrotas", derrotas,step=1)
+        new_empates = st.number_input("Novos Empates", empates,step=1)
         new_partidas_jogadas = new_derrotas + new_empates + new_vitorias
-        new_gols_marcados = st.number_input("Novos Gols Marcados", gols_marcados)
-        new_gols_sofridos = st.number_input("Novos Gols Sofridos", gols_sofridos)
+        new_gols_marcados = st.number_input("Novos Gols Marcados", gols_marcados,step=1)
+        new_gols_sofridos = st.number_input("Novos Gols Sofridos", float(gols_sofridos))
         new_campeonato_ano = new_gols_marcados - new_gols_sofridos
 
         if st.button("Atualizar"):
