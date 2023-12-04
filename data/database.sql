@@ -36,3 +36,13 @@ CREATE TABLE Jogador (
     TimeNome TEXT,
     FOREIGN KEY (TimeNome) REFERENCES Time (Nome)
 );
+
+CREATE TABLE Artilheiro (
+    IdArtilheiro INTEGER PRIMARY KEY,
+    NomeJogador TEXT,
+    GolsMarcados INTEGER,
+    TimeNome TEXT,
+    CampeonatoAno INTEGER,
+    FOREIGN KEY (TimeNome) REFERENCES Time (Nome),
+    FOREIGN KEY (CampeonatoAno) REFERENCES Campeonato (Ano)
+);

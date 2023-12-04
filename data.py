@@ -81,3 +81,24 @@ def get_time_data():
     conn.close()
 
     return time_data
+
+def insert_artilheiro(nome_jogador, gols_marcados, time_nome, campeonato_ano):
+    conn = sqlite3.connect('data/campeonato.db')
+    cursor = conn.cursor()
+
+    cursor.execute("INSERT INTO Artilheiro (NomeJogador, GolsMarcados, TimeNome, CampeonatoAno) VALUES (?, ?, ?, ?)",
+                   (nome_jogador, gols_marcados, time_nome, campeonato_ano))
+
+    conn.commit()
+    conn.close()
+    
+def get_artilheiros_data():
+    conn = sqlite3.connect('data/campeonato.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM Artilheiro")
+    artilheiros_data = cursor.fetchall()
+
+    conn.close()
+
+    return artilheiros_data

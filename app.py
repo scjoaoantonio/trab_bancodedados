@@ -131,6 +131,22 @@ def authenticate(username, password):
         return None
 
 
+def show_artilheiros():
+    st.header("Classificação dos Artilheiros")
+    artilheiros_data = data.get_artilheiros_data()
+
+    if artilheiros_data:
+        df_artilheiros = pd.DataFrame(artilheiros_data, columns=["Nome Jogador", "Gols Marcados", "Time", "Ano"])
+
+        # Ordenar o DataFrame pelos gols marcados em ordem decrescente
+        df_artilheiros = df_artilheiros.sort_values(by="Gols Marcados", ascending=False)
+
+        # Resetar o índice para começar em 1
+        df_artilheiros.index = df_artilheiros.index + 1
+
+        st.dataframe(df_artilheiros)
+    else:
+        st.write("Nenhum dado de artilheiro disponível.")
 
 def main_app():
     st.title("Campeonato Brasileiro 2023")
@@ -143,7 +159,7 @@ def main_app():
         st.error("Insira suas credenciais válidas e faça seu login.")
     else:
         # Menu lateral com botões para navegar nas funcionalidades
-        option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time"))
+        option = st.sidebar.radio("Menu", ("Classificação", "Artilheiros", "Inserir Time", "Deletar Time", "Alterar Time"))
 
         if role == "admin":  # Somente o administrador tem acesso às funções de edição
             if option == "Inserir Time":
@@ -152,11 +168,11 @@ def main_app():
                 delete_time_screen()
             elif option == "Alterar Time":
                 update_time_screen()
+            elif option == "Artilheiros":
+                show_artilheiros()
 
         # As outras opções podem ser acessadas por ambos (usuários e administradores)
         if option == "Classificação":
             show_ranking()
-
-if __name__ == "__main__":
-    st.write("Executando o aplicativo...")
-    main_app()
+        elif option == "Artilheiros":
+            show_artilheiros()
