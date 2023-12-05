@@ -181,6 +181,18 @@ def delete_jogador_screen():
             nome_jogador = selected_jogador[0]  
             data.delete_jogador(nome_jogador)  
             st.success(f"Jogador '{nome_jogador}' excluído com sucesso!")
+
+def show_jogadores():
+    st.header("Lista de Jogadores")
+    jogador_data = data.get_jogador_data()
+
+    if jogador_data:
+        df = pd.DataFrame(jogador_data, columns=["Nome", "Cartões Amarelos", "Nacionalidade", "Cartões Vermelhos", "Faltas Cometidas", "Gols", "Time Nome"])
+
+        st.dataframe(df)
+    else:
+        st.write("Nenhum dado de jogador disponível.")
+
             
 '''  
 Função para obter os dados da artilharia do campeonato:
@@ -351,9 +363,9 @@ def main_app():
         st.error("Insira suas credenciais válidas e faça seu login.")
     else:
         if role == "admin":
-            option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time", "Dashboard Time","Inserir Jogador","Alterar Jogador","Deletar Jogador","Artilharia Dados","Agressivo ou Fair Play"))
+            option = st.sidebar.radio("Menu", ("Classificação","Jogadores", "Inserir Time", "Deletar Time", "Alterar Time", "Dashboard Time","Inserir Jogador","Alterar Jogador","Deletar Jogador","Artilharia Dados","Agressivo ou Fair Play"))
         if role == "user":
-            option = st.sidebar.radio("Menu", ("Classificação","Dashboard Time","Artilharia Dados","Agressivo ou Fair Play"))
+            option = st.sidebar.radio("Menu", ("Classificação","Jogadores","Dashboard Time","Artilharia Dados","Agressivo ou Fair Play"))
 
         if role == "admin": 
             if option == "Inserir Time":
@@ -388,4 +400,6 @@ def main_app():
 
         if option == "Classificação":
             show_ranking()
+        if option == "Jogadores":
+            show_jogadores()
 
