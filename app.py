@@ -4,6 +4,8 @@ import data
 import requests
 import plotly.express as px
 from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
+
 
 # calcular os pontos de cada time
 def calculate_points(vitorias, empates, derrotas):
@@ -216,10 +218,10 @@ def obter_dados_artilharia():
         st.error(f"Falha ao obter a página. Status Code: {response.status_code}")
 
 '''  
-Função para obter os dados do campeonato:
+Função para obter os dados de fairplay do campeonato:
     faz um webscrapping na página recebida;
     seleciona os dados resgatados
-    exibe esses dados (time fair play + time mais agressivo)
+    exibe esses dados
 '''
 def extrair_dados_estatisticas(url):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
@@ -248,10 +250,18 @@ def extrair_dados_estatisticas(url):
             st.write(f"Time mais agressivo: {time_maior_soma.get('Hora', 'Nome não encontrado')}")
             st.write(f"Time Fair Play: {time_menor_soma.get('Hora', 'Nome não encontrado')}")
 
-            st.header("Dados da Tabela de Estatísticas")
-            for i, dado in enumerate(dados, 1):
-                st.subheader(f"Time {i}")
-                st.write(dado)
+            fig_pts, ax_pts = plt.subplots(figsize=(10, 6))
+            ax_pts.bar([dado['Hora'] for dado in dados], [int(dado['PTS']) for dado in dados])
+            ax_pts.set_xlabel('Times')
+            ax_pts.set_ylabel('Pontos (PTS)')
+            ax_pts.set_title('Pontuação dos Times')
+            plt.xticks(rotation=45, ha='right')
+            st.pyplot(fig_pts)
+
+            fig_ca, ax_ca = plt.subplots(figsize=(8, 8))
+            ax_ca.pie([int(dado['CA']) for dado in dados], labels=[dado['Hora'] for dado in dados], autopct='%1.1f%%')
+            ax_ca.set_title('Cartões Amarelos por Time')
+            st.pyplot(fig_ca)
 
         else:
             st.warning("Nenhuma tabela de estatísticas encontrada na página.")
@@ -304,7 +314,6 @@ def dashboard_page():
         st.subheader("Gráficos de dispersão para Variáveis Numéricas:")
         scatter_columns = ["Pontos", "Vitórias", "Derrotas", "Empates", "GolsMarcados", "GolsSofridos", "Saldo"]
         for column in scatter_columns:
-            st.write(f"Gráfico de dispersão para {column}")
             scatter_fig = px.scatter(df, x="Nome", y=column, title=f"Gráfico de dispersão para {column}")
             st.plotly_chart(scatter_fig)
 
