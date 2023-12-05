@@ -182,6 +182,7 @@ def delete_jogador_screen():
             data.delete_jogador(nome_jogador)  
             st.success(f"Jogador '{nome_jogador}' excluído com sucesso!")
 
+#Função para mostrar os jogadores cadastrados
 def show_jogadores():
     st.header("Lista de Jogadores")
     jogador_data = data.get_jogador_data()
@@ -363,9 +364,9 @@ def main_app():
         st.error("Insira suas credenciais válidas e faça seu login.")
     else:
         if role == "admin":
-            option = st.sidebar.radio("Menu", ("Classificação","Jogadores", "Inserir Time", "Deletar Time", "Alterar Time", "Dashboard Time","Inserir Jogador","Alterar Jogador","Deletar Jogador","Artilharia Dados","Agressivo ou Fair Play"))
+            option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time", "Dashboard Time","Inserir Jogador","Alterar Jogador","Deletar Jogador","Jogadores","Artilharia Dados","Agressivo ou Fair Play"))
         if role == "user":
-            option = st.sidebar.radio("Menu", ("Classificação","Jogadores","Dashboard Time","Artilharia Dados","Agressivo ou Fair Play"))
+            option = st.sidebar.radio("Menu", ("Classificação","Dashboard Time","Jogadores","Artilharia Dados","Agressivo ou Fair Play"))
 
         if role == "admin": 
             if option == "Inserir Time":
@@ -382,6 +383,8 @@ def main_app():
                 update_jogador_screen()
             elif option == "Deletar Jogador":
                 delete_jogador_screen()
+            elif option == "Jogadores":
+                show_jogadores()
             elif option == "Artilharia Dados":
                 obter_dados_artilharia()
             elif option == "Agressivo ou Fair Play":
@@ -396,10 +399,9 @@ def main_app():
             elif option == "Agressivo ou Fair Play":
                 url_da_pagina = 'https://www.espn.com.br/futebol/estatisticas/_/liga/BRA.1/vista/cartoes'
                 extrair_dados_estatisticas(url_da_pagina)
-
+            elif option == "Jogadores":
+                show_jogadores()
 
         if option == "Classificação":
             show_ranking()
-        if option == "Jogadores":
-            show_jogadores()
 
