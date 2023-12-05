@@ -5,6 +5,7 @@ import requests
 import plotly.express as px
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 
 # calcular os pontos de cada time
@@ -182,7 +183,6 @@ def delete_jogador_screen():
             data.delete_jogador(nome_jogador)  
             st.success(f"Jogador '{nome_jogador}' excluído com sucesso!")
 
-#Função para mostrar os jogadores cadastrados
 def show_jogadores():
     st.header("Lista de Jogadores")
     jogador_data = data.get_jogador_data()
@@ -194,7 +194,59 @@ def show_jogadores():
     else:
         st.write("Nenhum dado de jogador disponível.")
 
-            
+def insert_partida_screen():
+    st.header("Inserir uma Partida")
+    
+    placar_mandante = st.number_input("Placar Mandante", step=1)
+    placar_visitante = st.number_input("Placar Visitante", step=1)
+    estadio = st.text_input("Estádio")
+    data_partida = st.date_input("Data da Partida")
+    campeonato_ano = st.number_input("Ano do Campeonato", step=1)
+    time_mandante = st.text_input("Time Mandante")
+    time_visitante = st.text_input("Time Visitante")
+    
+    if st.button("Inserir"):
+        data.insert_partida(placar_mandante, placar_visitante, estadio, data_partida, campeonato_ano, time_mandante, time_visitante)
+        st.success("Partida inserida com sucesso!")
+
+def update_partida_screen():
+    st.header("Atualizar uma Partida")
+
+    partida_data = data.get_partida_data()
+
+    selected_partida = st.selectbox("Selecione a partida a ser atualizada:", partida_data)
+
+    if selected_partida:
+        st.write("Atualize os campos abaixo:")
+
+        id_partida, placar_mandante, placar_visitante, estadio, data_partida, campeonato_ano, time_mandante, time_visitante = selected_partida
+
+        new_placar_mandante = st.number_input("Novo Placar Mandante", placar_mandante)
+        new_placar_visitante = st.number_input("Novo Placar Visitante", placar_visitante)
+        new_estadio = st.text_input("Novo Estádio", estadio)
+        new_data_partida = st.date_input("Nova Data da Partida", value=datetime.strptime(data_partida, "%Y-%m-%d"))
+        new_campeonato_ano = st.number_input("Novo Ano do Campeonato", campeonato_ano)
+        new_time_mandante = st.text_input("Novo Time Mandante", time_mandante)
+        new_time_visitante = st.text_input("Novo Time Visitante", time_visitante)
+
+        if st.button("Atualizar"):
+            data.update_partida(id_partida, new_placar_mandante, new_placar_visitante, new_estadio, new_data_partida, new_campeonato_ano, new_time_mandante, new_time_visitante)
+            st.success(f"Dados da partida '{id_partida}' atualizados com sucesso!")
+
+def delete_partida_screen():
+    st.header("Excluir uma Partida")
+
+    partida_data = data.get_partida_data()
+
+    selected_partida = st.selectbox("Selecione a partida a ser excluída:", partida_data)
+
+    if st.button("Excluir"):
+        if selected_partida:
+            id_partida = selected_partida[0]  
+            data.delete_partida(id_partida)  
+            st.success(f"Partida '{id_partida}' excluída com sucesso!")
+
+
 '''  
 Função para obter os dados da artilharia do campeonato:
     faz um webscrapping na página selecionada;
@@ -364,9 +416,9 @@ def main_app():
         st.error("Insira suas credenciais válidas e faça seu login.")
     else:
         if role == "admin":
-            option = st.sidebar.radio("Menu", ("Classificação", "Inserir Time", "Deletar Time", "Alterar Time", "Dashboard Time","Inserir Jogador","Alterar Jogador","Deletar Jogador","Jogadores","Artilharia Dados","Agressivo ou Fair Play"))
+            option = st.sidebar.radio("Menu", ("Classificação","Jogadores", "Inserir Time", "Deletar Time", "Alterar Time", "Dashboard Time","Inserir Jogador","Alterar Jogador","Deletar Jogador","Artilharia Dados","Inserir partida","Alterar partida","Deletar partida","Agressivo ou Fair Play"))
         if role == "user":
-            option = st.sidebar.radio("Menu", ("Classificação","Dashboard Time","Jogadores","Artilharia Dados","Agressivo ou Fair Play"))
+            option = st.sidebar.radio("Menu", ("Classificação","Jogadores","Dashboard Time","Artilharia Dados","Agressivo ou Fair Play"))
 
         if role == "admin": 
             if option == "Inserir Time":
@@ -383,10 +435,14 @@ def main_app():
                 update_jogador_screen()
             elif option == "Deletar Jogador":
                 delete_jogador_screen()
-            elif option == "Jogadores":
-                show_jogadores()
             elif option == "Artilharia Dados":
                 obter_dados_artilharia()
+            elif option == "Inserir partida":
+                insert_partida_screen()
+            elif option == "Alterar partida":
+                update_partida_screen()
+            elif option == "Deletar partida":
+                delete_partida_screen()
             elif option == "Agressivo ou Fair Play":
                 url_da_pagina = 'https://www.espn.com.br/futebol/estatisticas/_/liga/BRA.1/vista/cartoes'
                 extrair_dados_estatisticas(url_da_pagina)
@@ -399,9 +455,9 @@ def main_app():
             elif option == "Agressivo ou Fair Play":
                 url_da_pagina = 'https://www.espn.com.br/futebol/estatisticas/_/liga/BRA.1/vista/cartoes'
                 extrair_dados_estatisticas(url_da_pagina)
-            elif option == "Jogadores":
-                show_jogadores()
+
 
         if option == "Classificação":
             show_ranking()
-
+        if option == "Jogadores":
+            show_jogadores()

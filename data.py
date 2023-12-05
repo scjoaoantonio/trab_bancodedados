@@ -142,3 +142,45 @@ def get_jogador_data():
     conn.close()
 
     return jogador_data
+
+def insert_partida(placar_mandante, placar_visitante, estadio, data_partida, campeonato_ano, time_mandante, time_visitante):
+    conn = sqlite3.connect('data/campeonato.db')
+    cursor = conn.cursor()
+
+    cursor.execute("INSERT INTO Partida (PlacarMandante, PlacarVisitante, Estadio, Data, CampeonatoAno, TimeMandante, TimeVisitante) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+                   (placar_mandante, placar_visitante, estadio, data_partida, campeonato_ano, time_mandante, time_visitante))
+
+    conn.commit()
+    conn.close()
+
+def update_partida(id_partida, placar_mandante, placar_visitante, estadio, data_partida, campeonato_ano, time_mandante, time_visitante):
+    conn = sqlite3.connect('data/campeonato.db')
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE Partida SET PlacarMandante=?, PlacarVisitante=?, Estadio=?, Data=?, CampeonatoAno=?, TimeMandante=?, TimeVisitante=? WHERE IdPartida=?",
+                   (placar_mandante, placar_visitante, estadio, data_partida, campeonato_ano, time_mandante, time_visitante, id_partida))
+
+    conn.commit()
+    conn.close()
+
+def delete_partida(id_partida):
+    conn = sqlite3.connect('data/campeonato.db')
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM Partida WHERE IdPartida = ?", (id_partida,))
+    
+    conn.commit()
+    conn.close()
+
+
+def get_partida_data():
+    conn = sqlite3.connect('data/campeonato.db')
+    cursor = conn.cursor()
+
+    # Execute a consulta para obter os dados da tabela Partida
+    cursor.execute("SELECT IdPartida, PlacarMandante, PlacarVisitante, Estadio, Data, CampeonatoAno, TimeMandante, TimeVisitante FROM Partida")
+    partida_data = cursor.fetchall()
+
+    conn.close()
+
+    return partida_data

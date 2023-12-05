@@ -22,7 +22,11 @@ CREATE TABLE Partida (
     Estadio TEXT,
     Data DATE,
     CampeonatoAno INTEGER,
-    FOREIGN KEY (CampeonatoAno) REFERENCES Campeonato (Ano)
+    TimeMandante TEXT,
+    TimeVisitante TEXT,
+    FOREIGN KEY (CampeonatoAno) REFERENCES Campeonato(Ano),
+    FOREIGN KEY (TimeMandante) REFERENCES Time(Nome),
+    FOREIGN KEY (TimeVisitante) REFERENCES Time(Nome)
 );
 
 CREATE TABLE Jogador (
